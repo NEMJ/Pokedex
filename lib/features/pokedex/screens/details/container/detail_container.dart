@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/common/error/failure.dart';
 import 'package:pokedex/common/models/pokemon.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
-import 'package:pokedex/features/pokedex/screens/details/container/detail_container.dart';
-import 'package:pokedex/features/pokedex/screens/home/pages/home_error.dart';
-import 'package:pokedex/features/pokedex/screens/home/pages/home_loading.dart';
-import 'package:pokedex/features/pokedex/screens/home/pages/home_page.dart';
+import 'package:pokedex/common/widgets/po_error.dart';
+import 'package:pokedex/common/widgets/po_loading.dart';
+import 'package:pokedex/features/pokedex/screens/details/pages/detail_page.dart';
 
-class HomeContainer extends StatelessWidget {
-  const HomeContainer({
+class DetailArguments {
+  DetailArguments({required this.name});
+  final String name;
+}
+
+class DetailContainer extends StatelessWidget {
+  const DetailContainer({
     Key? key,
     required this.repository,
-    required this.onItemTap,
+    required this.arguments,
   }) : super(key: key);
 
   final IPokemonRepository repository;
-  final Function(String, DetailArguments) onItemTap;
+  final DetailArguments arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +27,16 @@ class HomeContainer extends StatelessWidget {
       future: repository.getAllPokemons(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return HomeLoading();
+          return PoLoading();
         }
 
         if (snapshot.connectionState == ConnectionState.done &&
           snapshot.hasData) {
-          return HomePage(
-            list: snapshot.data!,
-            onItemTap: onItemTap,
-          );
+          return DetailPage(name: arguments.name, list: snapshot.data!);
         }
 
         if (snapshot.hasError) {
-          return HomeError(
+          return PoError(
             error: (snapshot.error as Failure).message!,
           );
         }

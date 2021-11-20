@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
+import 'package:pokedex/features/pokedex/screens/details/container/detail_container.dart';
 import 'screens/home/container/home_container.dart';
 
 class PokedexRoute extends StatelessWidget {
@@ -18,17 +19,25 @@ class PokedexRoute extends StatelessWidget {
         if(settings.name == '/') {
           return MaterialPageRoute(
             builder: (context) {
-              return HomeContainer(repository: repository);
+              return HomeContainer(
+                repository: repository,
+                onItemTap: (route, arguments) {
+                  Navigator.of(context).pushNamed(route, arguments: arguments);
+                },
+              );
             },
           );
         }
-        /*if (settings.name == '/details') {
+        if (settings.name == '/details') {
           return MaterialPageRoute(
             builder: (context) {
-              return HomeContainer(repository: repository);
+              return DetailContainer(
+                repository: repository,
+                arguments: (settings.arguments as DetailArguments),
+              );
             },
           );
-        }*/
+        }
       },
     );
   }
